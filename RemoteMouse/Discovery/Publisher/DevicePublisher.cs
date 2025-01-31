@@ -27,7 +27,7 @@ public class DevicePublisher(IScopedResourceFactory resourceFactory) : IDevicePu
                 var subscription = descriptionHost
                     .ServeDeviceDocument(device)
                     .Subscribe(
-                        _ => Debug.WriteLine($"Http listener started"),
+                        _ => Debug.WriteLine("Http listener started"),
                         observer.OnError,
                         observer.OnCompleted
                     );
