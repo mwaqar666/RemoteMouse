@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:RemoteMouse.ViewModels.Mobile"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+             x:Class="RemoteMouse.Views.Mobile.LocateDeviceView"
+             x:DataType="vm:LocateDeviceViewModel">
+    <Design.DataContext>
+        <!--This only sets the DataContext for the previewer in an IDE.-->
+        <vm:LocateDeviceViewModel />
+    </Design.DataContext>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Padding="10 10 10 5">
+            <DockPanel>
+                <Button DockPanel.Dock="Left" Background="Transparent">
+                    <PathIcon Data="{StaticResource text_align_justify_regular}" />
+                </Button>
+
+                <Button DockPanel.Dock="Right" Background="Transparent" Command="{Binding SearchForDevicesCommand}">
+                    <PathIcon Data="{StaticResource add_regular}" />
+                </Button>
+
+                <TextBlock Text="Select a computer" Margin="10 0" VerticalAlignment="Center" />
+            </DockPanel>
+        </Border>
+
+        <Border Padding="10 5 10 10">
+            <ListBox ItemsSource="{Binding Devices}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Height="40">
+                            <PathIcon DockPanel.Dock="Left" Foreground="Green" Data="{StaticResource laptop_regular}" Margin="10 0">
+                                <PathIcon.RenderTransform>
+                                    <ScaleTransform ScaleX="1.25" ScaleY="1.25" />
+                                </PathIcon.RenderTransform>
+                            </PathIcon>
+
+                            <Button DockPanel.Dock="Right" Background="Transparent">
+                                <PathIcon Foreground="Green" Data="{StaticResource link_regular}" />
+                            </Button>
+
+                            <TextBlock Text="{Binding FriendlyName}" VerticalAlignment="Center" FontSize="16" Margin="10 0" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+    </DockPanel>
+</UserControl>
