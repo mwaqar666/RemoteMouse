@@ -1,64 +1,49 @@
 using System;
-using System.Diagnostics;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using RemoteMouse.Discovery.Contracts;
+using RemoteMouse.Discovery.Publisher;
 using RemoteMouse.Network;
 
 namespace RemoteMouse.ViewModels.Desktop;
 
 public partial class DashboardViewModel() : ViewModelBase, IActivatableViewModel
 {
-    private readonly IDevicePublisher _devicePublisher = null!;
-
     [Reactive] private string _connectivityStatus = "Disconnected";
 
     [Reactive] private DeviceNetwork? _deviceNetwork;
 
-    private IDisposable? _subscription;
-
-    public DashboardViewModel(IDevicePublisher devicePublisher) : this()
+    public DashboardViewModel(IDevicePublisher devicePublisher, DescriptionHost descriptionHost) : this()
     {
-        _devicePublisher = devicePublisher;
-
-        this.WhenActivated(disposables =>
-        {
-            NetworkStatus.NetworkChange
-                .ObserveOn(RxApp.TaskpoolScheduler)
-                .Subscribe(PublishDeviceOnNetworkChange, LogDevicePublicationException)
-                .DisposeWith(disposables);
-        });
+        this.WhenActivated(disposables => ObserveNetworkChanges(devicePublisher, descriptionHost).DisposeWith(disposables));
     }
 
     public ViewModelActivator Activator { get; } = new();
-
-    private void PublishDeviceOnNetworkChange(DeviceNetwork? deviceNetwork)
-    {
-        SetDeviceNetwork(deviceNetwork);
-
-        if (DeviceNetwork is null)
-        {
-            _subscription?.Dispose();
-
-            return;
-        }
-
-        _subscription = _devicePublisher.PublishDevice(DeviceNetwork).ObserveOn(RxApp.TaskpoolScheduler).Subscribe();
-    }
-
-    private void LogDevicePublicationException(Exception exception)
-    {
-        SetDeviceNetwork();
-
-        Debug.WriteLine($"Exception: {exception}");
-    }
 
     private void SetDeviceNetwork(DeviceNetwork? deviceNetwork = null)
     {
         DeviceNetwork = deviceNetwork;
 
         ConnectivityStatus = deviceNetwork is null ? "Disconnected" : "Connected";
+    }
+
+    private IDisposable ObserveNetworkChanges(IDevicePublisher devicePublisher, DescriptionHost descriptionHost)
+    {
+        var networkChange = NetworkStatus.NetworkChange;
+
+        return networkChange
+            .Do(SetDeviceNetwork)
+            .Select(deviceNetwork =>
+            {
+                if (deviceNetwork is null) return Observable.Empty<Unit>();
+
+                return devicePublisher.PublishDevice(deviceNetwork)
+                    .SelectMany(descriptionHost.ServeDeviceDocument)
+                    .TakeUntil(networkChange); // Unsubscribe when firstObservable emits again
+            })
+            .Subscribe();
     }
 }

@@ -2,7 +2,7 @@ using System;
 
 namespace RemoteMouse.DI.Contracts;
 
-public interface IScopedResource<out T> : IDisposable
+public interface IResourceContainer<out T> : IDisposable
 {
     T Resources { get; }
 }

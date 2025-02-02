@@ -1,7 +1,5 @@
 using System;
-using System.Diagnostics;
 using System.Reactive.Linq;
-using System.Text;
 using RemoteMouse.DI.Contracts;
 using RemoteMouse.Discovery.Contracts;
 using RemoteMouse.Discovery.Enums;
@@ -15,33 +13,20 @@ public class DevicePublisher(IScopedResourceFactory resourceFactory) : IDevicePu
     public IObservable<SsdpDevice> PublishDevice(DeviceNetwork deviceNetwork)
     {
         return Observable.Using(
-            resourceFactory.GetResources<SsdpDevicePublisher, DescriptionHost>,
-            scopedResource => Observable.Create<SsdpDevice>(observer =>
+            resourceFactory.GetResource<SsdpDevicePublisher>,
+            resourceContainer => Observable.Create<SsdpDevice>(observer =>
             {
-                var (devicePublisher, descriptionHost) = scopedResource.Resources;
+                var devicePublisher = resourceContainer.Resources;
 
                 var device = CreateDevice(deviceNetwork);
 
                 devicePublisher.AddDevice(device);
 
-                var subscription = descriptionHost
-                    .ServeDeviceDocument(device)
-                    .Subscribe(
-                        _ => Debug.WriteLine("Http listener started"),
-                        observer.OnError,
-                        observer.OnCompleted
-                    );
-
                 observer.OnNext(device);
 
                 observer.OnCompleted();
 
-                return () =>
-                {
-                    subscription.Dispose();
-
-                    devicePublisher.RemoveDevice(device);
-                };
+                return () => devicePublisher.RemoveDevice(device);
             })
         );
     }
@@ -55,7 +40,7 @@ public class DevicePublisher(IScopedResourceFactory resourceFactory) : IDevicePu
             Location = new Uri(CreateDeviceDescriptionUrl(deviceNetwork)), // URL for the device description
             PresentationUrl = new Uri(CreateDeviceDescriptionUrl(deviceNetwork)),
             DeviceTypeNamespace = Constants.ApplicationAuthor, // Custom namespace
-            DeviceType = GetDeviceType(), // Device type
+            DeviceType = CreateDeviceType(), // Device type
             FriendlyName = "Remote Mouse Desktop", // Name of the device
             DeviceVersion = 1, // Version of device
             Manufacturer = Environment.MachineName,
@@ -63,16 +48,14 @@ public class DevicePublisher(IScopedResourceFactory resourceFactory) : IDevicePu
         };
     }
 
-    private static string GetDeviceType()
+    private static string CreateDeviceType()
     {
-        var applicationType = GetApplicationType();
-
-        return $"{Constants.ApplicationAuthor}-{applicationType.ToString().ToLower()}";
+        return $"{Constants.ApplicationAuthor}-{GetApplicationType().ToString().ToLower()}";
     }
 
     private static string CreateDeviceDescriptionUrl(DeviceNetwork deviceNetwork)
     {
-        return new StringBuilder().Append("http://").Append(deviceNetwork.LocalIpAddress).Append("/device-description.xml").ToString();
+        return $"http://{deviceNetwork.LocalIpAddress}/device-description.xml";
     }
 
     private static ApplicationType GetApplicationType()

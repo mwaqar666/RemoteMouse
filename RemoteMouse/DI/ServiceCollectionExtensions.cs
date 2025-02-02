@@ -14,7 +14,6 @@ public static class ServiceCollectionExtensions
 {
     public static void AddCommonServices(this IServiceCollection collection)
     {
-        // Scoped Resources Factory
         collection.AddTransient<IScopedResourceFactory, ScopedResourceFactory>();
     }
 

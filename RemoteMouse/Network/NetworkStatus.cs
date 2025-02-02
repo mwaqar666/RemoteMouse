@@ -21,7 +21,7 @@ public static class NetworkStatus
                 handler => System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged += handler,
                 handler => System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged -= handler
             )
-            .Throttle(TimeSpan.FromSeconds(5))
+            .Throttle(TimeSpan.FromSeconds(2))
             .DistinctUntilChanged(pattern => pattern.EventArgs.IsAvailable)
             .Select(_ => GetDeviceNetwork());
     }
@@ -33,7 +33,7 @@ public static class NetworkStatus
                 handler => System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged += handler,
                 handler => System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= handler
             )
-            .Throttle(TimeSpan.FromSeconds(5))
+            .Throttle(TimeSpan.FromSeconds(2))
             .Select(_ => GetDeviceNetwork());
     }
 

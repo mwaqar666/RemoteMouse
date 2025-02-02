@@ -1,65 +1,112 @@
 using System;
 using System.Net;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Xml.Linq;
+using RemoteMouse.DI.Contracts;
 using Rssdp;
 
 namespace RemoteMouse.Discovery.Publisher;
 
-public class DescriptionHost(HttpListener listener)
+public class DescriptionHost(IScopedResourceFactory resourceFactory)
 {
+    // public IObservable<Unit> ServeDeviceDocument(SsdpDevice device)
+    // {
+    //     return Observable.Using(
+    //         resourceFactory.GetResource<HttpListener>,
+    //         resourceContainer => Observable.Create<Unit>(observer =>
+    //         {
+    //             var listener = resourceContainer.Resources;
+    //
+    //             // Add the prefix to the listener
+    //             listener.Prefixes.Add(
+    //                 $"{device.PresentationUrl.Scheme}://{device.PresentationUrl.Host}/"
+    //             );
+    //
+    //             var deviceDocument = CreateDeviceDocument(device);
+    //
+    //             try
+    //             {
+    //                 listener.Start();
+    //
+    //                 observer.OnNext(Unit.Default);
+    //
+    //                 var subscription = Observable
+    //                     .FromAsync(listener.GetContextAsync)
+    //                     .Repeat()
+    //                     .TakeWhile(_ => listener.IsListening)
+    //                     .Subscribe(
+    //                         context => HandleRequest(context, deviceDocument),
+    //                         observer.OnError
+    //                     );
+    //
+    //                 return () =>
+    //                 {
+    //                     subscription.Dispose();
+    //
+    //                     listener.Stop();
+    //
+    //                     listener.Close();
+    //                 };
+    //             }
+    //             catch (Exception exception)
+    //             {
+    //                 observer.OnError(exception);
+    //
+    //                 return () => { };
+    //             }
+    //         })
+    //     );
+    // }
+
     public IObservable<Unit> ServeDeviceDocument(SsdpDevice device)
     {
-        return Observable.Create<Unit>(observer =>
-        {
-            // Must not create another listener if one is already listening
-            if (listener.IsListening)
+        return Observable.Using(
+            resourceFactory.GetResource<HttpListener>,
+            resourceContainer => Observable.Create<Unit>(observer =>
             {
-                observer.OnError(new InvalidOperationException("Listener is already listening"));
+                var listener = resourceContainer.Resources;
 
-                return () => { };
-            }
+                // Add the prefix to the listener
+                listener.Prefixes.Add(
+                    $"{device.PresentationUrl.Scheme}://{device.PresentationUrl.Host}/"
+                );
 
-            // Add the prefix to the listener
-            var listenerPrefix = $"{device.PresentationUrl.Scheme}://{device.PresentationUrl.Host}/";
-            if (!listener.Prefixes.Contains(listenerPrefix)) listener.Prefixes.Add(listenerPrefix);
-
-            try
-            {
-                listener.Start();
-                observer.OnNext(Unit.Default);
-
-                var subscription = Observable
-                    .FromAsync(listener.GetContextAsync)
-                    .Repeat()
-                    .TakeWhile(_ => listener.IsListening)
-                    .Subscribe(
-                        context => HandleRequest(context, device),
-                        observer.OnError,
-                        observer.OnCompleted
-                    );
-
-                return () =>
+                try
                 {
-                    subscription.Dispose();
+                    listener.Start();
 
-                    listener.Stop();
+                    observer.OnNext(Unit.Default);
 
-                    listener.Close();
-                };
-            }
-            catch (Exception exception)
-            {
-                observer.OnError(exception);
+                    return ListenForRequests(listener, device);
+                }
+                catch (Exception exception)
+                {
+                    observer.OnError(exception);
 
-                return () => { };
-            }
-        });
+                    return Disposable.Empty;
+                }
+            })
+        );
     }
 
-    private static void HandleRequest(HttpListenerContext context, SsdpDevice device)
+    private static IDisposable ListenForRequests(HttpListener listener, SsdpDevice device)
+    {
+        var deviceDocument = CreateDeviceDocument(device);
+
+        return Observable
+            .FromAsync(listener.GetContextAsync)
+            .Repeat()
+            .TakeWhile(_ => listener.IsListening)
+            .Subscribe(
+                context => HandleRequest(context, deviceDocument),
+                () => CleanupListener(listener)
+            );
+    }
+
+    private static void HandleRequest(HttpListenerContext context, string deviceDocument)
     {
         try
         {
@@ -70,29 +117,11 @@ public class DescriptionHost(HttpListener listener)
                 return;
             }
 
-            SetResponse(context, HttpStatusCode.OK, Encoding.UTF8.GetBytes(CreateDeviceDocument(device)));
+            SetResponse(context, HttpStatusCode.OK, Encoding.UTF8.GetBytes(deviceDocument));
         }
         catch (Exception)
         {
             SetResponse(context, HttpStatusCode.InternalServerError);
-        }
-    }
-
-    private static void SetResponse(HttpListenerContext context, HttpStatusCode statusCode, byte[]? buffer = null)
-    {
-        try
-        {
-            context.Response.StatusCode = (int)statusCode;
-
-            if (buffer is null) return;
-
-            context.Response.ContentType = "application/xml";
-            context.Response.ContentLength64 = buffer.Length;
-            context.Response.OutputStream.Write(buffer, 0, buffer.Length);
-        }
-        finally
-        {
-            context.Response.OutputStream.Close();
         }
     }
 
@@ -113,5 +142,29 @@ public class DescriptionHost(HttpListener listener)
                 )
             )
         ).ToString();
+    }
+
+    private static void SetResponse(HttpListenerContext context, HttpStatusCode statusCode, byte[]? buffer = null)
+    {
+        try
+        {
+            context.Response.StatusCode = (int)statusCode;
+
+            if (buffer is null) return;
+
+            context.Response.ContentType = "application/xml";
+            context.Response.ContentLength64 = buffer.Length;
+            context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+        }
+        finally
+        {
+            context.Response.OutputStream.Close();
+        }
+    }
+
+    private static void CleanupListener(HttpListener listener)
+    {
+        listener.Stop();
+        listener.Close();
     }
 }
