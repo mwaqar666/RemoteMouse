@@ -8,7 +8,7 @@ using Rssdp;
 
 namespace RemoteMouse.Discovery.Publisher;
 
-public class DevicePublisher(IScopedResourceFactory resourceFactory) : IDevicePublisher
+public class DevicePublisher(IResourceFactory resourceFactory) : IDevicePublisher
 {
     public IObservable<SsdpDevice> PublishDevice(DeviceNetwork deviceNetwork)
     {
@@ -23,8 +23,6 @@ public class DevicePublisher(IScopedResourceFactory resourceFactory) : IDevicePu
                 devicePublisher.AddDevice(device);
 
                 observer.OnNext(device);
-
-                observer.OnCompleted();
 
                 return () => devicePublisher.RemoveDevice(device);
             })

@@ -1,5 +1,5 @@
 using System;
-using System.Reactive;
+using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using ReactiveUI;
@@ -7,6 +7,7 @@ using ReactiveUI.SourceGenerators;
 using RemoteMouse.Discovery.Contracts;
 using RemoteMouse.Discovery.Publisher;
 using RemoteMouse.Network;
+using Rssdp;
 
 namespace RemoteMouse.ViewModels.Desktop;
 
@@ -32,18 +33,16 @@ public partial class DashboardViewModel() : ViewModelBase, IActivatableViewModel
 
     private IDisposable ObserveNetworkChanges(IDevicePublisher devicePublisher, DescriptionHost descriptionHost)
     {
-        var networkChange = NetworkStatus.NetworkChange;
-
-        return networkChange
+        return NetworkStatus.NetworkChange
             .Do(SetDeviceNetwork)
-            .Select(deviceNetwork =>
-            {
-                if (deviceNetwork is null) return Observable.Empty<Unit>();
-
-                return devicePublisher.PublishDevice(deviceNetwork)
-                    .SelectMany(descriptionHost.ServeDeviceDocument)
-                    .TakeUntil(networkChange); // Unsubscribe when firstObservable emits again
-            })
-            .Subscribe();
+            .Select(deviceNetwork => deviceNetwork is null ? Observable.Empty<SsdpDevice>() : devicePublisher.PublishDevice(deviceNetwork))
+            .Switch()
+            .Select(descriptionHost.ServeDeviceDocument)
+            .Switch()
+            .Subscribe(
+                x => Debug.WriteLine($"Device published on IP: {x}"),
+                x => Debug.WriteLine($"onError: {x}"),
+                () => Debug.WriteLine("onCompleted")
+            );
     }
 }

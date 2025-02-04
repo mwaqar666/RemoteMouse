@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RemoteMouse.ViewModels.Mobile"
+             xmlns:models="clr-namespace:Rssdp;assembly=Rssdp"
+             x:Class="RemoteMouse.Views.Mobile.DeviceListView"
+             x:DataType="vm:DeviceListViewModel">
+    <Design.DataContext>
+        <vm:DeviceListViewModel />
+    </Design.DataContext>
+
+    <Border Padding="10 5 10 10">
+        <ListBox ItemsSource="{Binding Devices}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type models:SsdpDevice}">
+                    <DockPanel Height="40">
+                        <PathIcon DockPanel.Dock="Left" Foreground="Green" Data="{StaticResource laptop_regular}" Margin="10 0">
+                            <PathIcon.RenderTransform>
+                                <ScaleTransform ScaleX="1.25" ScaleY="1.25" />
+                            </PathIcon.RenderTransform>
+                        </PathIcon>
+
+                        <Button DockPanel.Dock="Right" Background="Transparent">
+                            <PathIcon Foreground="Green" Data="{StaticResource link_regular}" />
+                        </Button>
+
+                        <TextBlock Text="{Binding FriendlyName}" VerticalAlignment="Center" FontSize="16" Margin="10 0" />
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Border>
+</UserControl>

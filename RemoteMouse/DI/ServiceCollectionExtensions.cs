@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddCommonServices(this IServiceCollection collection)
     {
-        collection.AddTransient<IScopedResourceFactory, ScopedResourceFactory>();
+        collection.AddTransient<IResourceFactory, ResourceFactory>();
     }
 
     public static void AddDesktopServices(this IServiceCollection collection)

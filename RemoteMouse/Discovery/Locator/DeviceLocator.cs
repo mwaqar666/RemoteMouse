@@ -2,19 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reactive.Linq;
+using RemoteMouse.DI.Contracts;
 using RemoteMouse.Discovery.Contracts;
 using Rssdp;
 
 namespace RemoteMouse.Discovery.Locator;
 
-public sealed class DeviceLocator : IDeviceLocator
+public sealed class DeviceLocator(IResourceFactory resourceFactory) : IDeviceLocator
 {
     public IObservable<SsdpDevice[]> LocateDevices()
     {
         return Observable.Using(
-            () => new SsdpDeviceLocator(),
-            deviceLocator =>
-                SearchForDevicesAsync(deviceLocator)
+            resourceFactory.GetResource<SsdpDeviceLocator>,
+            resourceContainer =>
+                SearchForDevicesAsync(resourceContainer.Resources)
                     .SelectMany(FlattenDiscoveredDevices)
                     .SelectMany(GetEachDiscoveredDeviceInfo)
                     .ToArray()

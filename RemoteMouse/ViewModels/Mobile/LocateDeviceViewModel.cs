@@ -1,5 +1,6 @@
-using System.Collections.ObjectModel;
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reactive.Disposables;
 using System.Windows.Input;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
@@ -10,30 +11,36 @@ namespace RemoteMouse.ViewModels.Mobile;
 
 public partial class LocateDeviceViewModel() : ViewModelBase, IActivatableViewModel
 {
+    [Reactive] private DeviceListViewModel? _deviceListViewModel;
+
     [Reactive] private bool _isSearching;
 
     public LocateDeviceViewModel(IDeviceLocator deviceLocator) : this()
     {
-        SearchForDevicesCommand = ReactiveCommand.CreateRunInBackground(deviceLocator.LocateDevices);
+        SearchForDevicesCommand = ReactiveCommand.CreateRunInBackground(() => LocateDevices(deviceLocator));
+
+        this.WhenActivated(disposables => LocateDevices(deviceLocator).DisposeWith(disposables));
     }
 
     [SuppressMessage("ReactiveUI.SourceGenerators.CodeFixers.PropertyToReactiveFieldAnalyzer", "RXUISG0016:Property To Reactive Field, change to [Reactive] private type _fieldName;")]
-    public ObservableCollection<SsdpDevice> Devices { get; } = [];
-
-    [SuppressMessage("ReactiveUI.SourceGenerators.CodeFixers.PropertyToReactiveFieldAnalyzer", "RXUISG0016:Property To Reactive Field, change to [Reactive] private type _fieldName;")]
-    public required ICommand SearchForDevicesCommand { get; init; }
+    public required ICommand SearchForDevicesCommand { get; set; }
 
     public ViewModelActivator Activator { get; } = new();
 
-    private void OnFoundDevices(object? _, SsdpDevice[] devices)
+    private IDisposable LocateDevices(IDeviceLocator deviceLocator)
     {
-        Devices.Clear();
+        IsSearching = true;
 
-        foreach (var device in devices) Devices.Add(device);
+        return deviceLocator.LocateDevices().Subscribe(SetDevices);
     }
 
-    private void OnSearchingForDevices(object? sender, bool isSearching)
+    private void SetDevices(SsdpDevice[] devices)
     {
-        IsSearching = isSearching;
+        DeviceListViewModel = new DeviceListViewModel
+        {
+            Devices = devices
+        };
+
+        IsSearching = false;
     }
 }

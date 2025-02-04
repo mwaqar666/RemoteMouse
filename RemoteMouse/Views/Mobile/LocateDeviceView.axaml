@@ -3,13 +3,31 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:RemoteMouse.ViewModels.Mobile"
+             xmlns:mobileViews="clr-namespace:RemoteMouse.Views.Mobile"
+             xmlns:commonViews="clr-namespace:RemoteMouse.Views.Common"
+             xmlns:converters="clr-namespace:RemoteMouse.Converters"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
              x:Class="RemoteMouse.Views.Mobile.LocateDeviceView"
              x:DataType="vm:LocateDeviceViewModel">
     <Design.DataContext>
-        <!--This only sets the DataContext for the previewer in an IDE.-->
         <vm:LocateDeviceViewModel />
     </Design.DataContext>
+
+    <UserControl.Resources>
+        <converters:DataLoaderConverter x:Key="DataLoader">
+            <converters:DataLoaderConverter.OnLoading>
+                <DataTemplate>
+                    <commonViews:LoadingView />
+                </DataTemplate>
+            </converters:DataLoaderConverter.OnLoading>
+
+            <converters:DataLoaderConverter.OnData>
+                <DataTemplate DataType="{x:Type vm:LocateDeviceViewModel}">
+                    <mobileViews:DeviceListView DataContext="{Binding DeviceListViewModel}" />
+                </DataTemplate>
+            </converters:DataLoaderConverter.OnData>
+        </converters:DataLoaderConverter>
+    </UserControl.Resources>
 
     <DockPanel>
         <Border DockPanel.Dock="Top" Padding="10 10 10 5">
@@ -26,26 +44,6 @@
             </DockPanel>
         </Border>
 
-        <Border Padding="10 5 10 10">
-            <ListBox ItemsSource="{Binding Devices}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <DockPanel Height="40">
-                            <PathIcon DockPanel.Dock="Left" Foreground="Green" Data="{StaticResource laptop_regular}" Margin="10 0">
-                                <PathIcon.RenderTransform>
-                                    <ScaleTransform ScaleX="1.25" ScaleY="1.25" />
-                                </PathIcon.RenderTransform>
-                            </PathIcon>
-
-                            <Button DockPanel.Dock="Right" Background="Transparent">
-                                <PathIcon Foreground="Green" Data="{StaticResource link_regular}" />
-                            </Button>
-
-                            <TextBlock Text="{Binding FriendlyName}" VerticalAlignment="Center" FontSize="16" Margin="10 0" />
-                        </DockPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Border>
+        <ContentControl Content="{Binding}" ContentTemplate="{Binding IsSearching, Mode=OneWay, Converter={StaticResource DataLoader}}" />
     </DockPanel>
 </UserControl>
