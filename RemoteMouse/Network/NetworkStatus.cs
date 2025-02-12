@@ -9,8 +9,8 @@ namespace RemoteMouse.Network;
 
 public static class NetworkStatus
 {
-    public static IObservable<DeviceNetwork?> NetworkChange { get; } = FromAvailabilityChanged()
-        .Merge(FromAddressChanged())
+    public static IObservable<DeviceNetwork?> OnNetworkChange { get; } = FromAvailabilityChanged()
+        .Concat(FromAddressChanged())
         .DistinctUntilChanged()
         .StartWith(GetDeviceNetwork());
 
@@ -18,23 +18,24 @@ public static class NetworkStatus
     {
         return Observable
             .FromEventPattern<NetworkAvailabilityChangedEventHandler, NetworkAvailabilityEventArgs>(
-                handler => System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged += handler,
-                handler => System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged -= handler
+                handler => NetworkChange.NetworkAvailabilityChanged += handler,
+                handler => NetworkChange.NetworkAvailabilityChanged -= handler
             )
             .Throttle(TimeSpan.FromSeconds(2))
-            .DistinctUntilChanged(pattern => pattern.EventArgs.IsAvailable)
-            .Select(_ => GetDeviceNetwork());
+            .Select(_ => GetDeviceNetwork())
+            .DistinctUntilChanged();
     }
 
     private static IObservable<DeviceNetwork?> FromAddressChanged()
     {
         return Observable
             .FromEventPattern<NetworkAddressChangedEventHandler, EventArgs>(
-                handler => System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged += handler,
-                handler => System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= handler
+                handler => NetworkChange.NetworkAddressChanged += handler,
+                handler => NetworkChange.NetworkAddressChanged -= handler
             )
             .Throttle(TimeSpan.FromSeconds(2))
-            .Select(_ => GetDeviceNetwork());
+            .Select(_ => GetDeviceNetwork())
+            .DistinctUntilChanged();
     }
 
     private static DeviceNetwork? GetDeviceNetwork()

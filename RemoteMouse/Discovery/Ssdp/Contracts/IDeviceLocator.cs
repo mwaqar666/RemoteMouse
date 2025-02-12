@@ -1,7 +1,7 @@
 using System;
 using Rssdp;
 
-namespace RemoteMouse.Discovery.Contracts;
+namespace RemoteMouse.Discovery.Ssdp.Contracts;
 
 public interface IDeviceLocator
 {

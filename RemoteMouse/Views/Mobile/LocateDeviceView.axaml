@@ -1,49 +1,47 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:RemoteMouse.ViewModels.Mobile"
-             xmlns:mobileViews="clr-namespace:RemoteMouse.Views.Mobile"
-             xmlns:commonViews="clr-namespace:RemoteMouse.Views.Common"
-             xmlns:converters="clr-namespace:RemoteMouse.Converters"
-             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
-             x:Class="RemoteMouse.Views.Mobile.LocateDeviceView"
-             x:DataType="vm:LocateDeviceViewModel">
-    <Design.DataContext>
-        <vm:LocateDeviceViewModel />
-    </Design.DataContext>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="clr-namespace:RemoteMouse.ViewModels.Mobile"
+			 xmlns:mobileViews="clr-namespace:RemoteMouse.Views.Mobile"
+			 xmlns:commonViews="clr-namespace:RemoteMouse.Views.Common"
+			 xmlns:converters="clr-namespace:RemoteMouse.Converters"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 x:Class="RemoteMouse.Views.Mobile.LocateDeviceView"
+			 x:DataType="vm:LocateDeviceViewModel">
+	<Design.DataContext>
+		<vm:LocateDeviceViewModel />
+	</Design.DataContext>
 
-    <UserControl.Resources>
-        <converters:DataLoaderConverter x:Key="DataLoader">
-            <converters:DataLoaderConverter.OnLoading>
-                <DataTemplate>
-                    <commonViews:LoadingView />
-                </DataTemplate>
-            </converters:DataLoaderConverter.OnLoading>
+	<UserControl.Resources>
+		<converters:DataLoaderConverter x:Key="DataLoader">
+			<converters:DataLoaderConverter.OnLoading>
+				<DataTemplate>
+					<commonViews:LoadingView />
+				</DataTemplate>
+			</converters:DataLoaderConverter.OnLoading>
 
-            <converters:DataLoaderConverter.OnData>
-                <DataTemplate DataType="{x:Type vm:LocateDeviceViewModel}">
-                    <mobileViews:DeviceListView DataContext="{Binding DeviceListViewModel}" />
-                </DataTemplate>
-            </converters:DataLoaderConverter.OnData>
-        </converters:DataLoaderConverter>
-    </UserControl.Resources>
+			<converters:DataLoaderConverter.OnData>
+				<DataTemplate DataType="{x:Type vm:LocateDeviceViewModel}">
+					<mobileViews:DeviceListView DataContext="{Binding DeviceListViewModel}" />
+				</DataTemplate>
+			</converters:DataLoaderConverter.OnData>
+		</converters:DataLoaderConverter>
+	</UserControl.Resources>
 
-    <DockPanel>
-        <Border DockPanel.Dock="Top" Padding="10 10 10 5">
-            <DockPanel>
-                <Button DockPanel.Dock="Left" Background="Transparent">
-                    <PathIcon Data="{StaticResource text_align_justify_regular}" />
-                </Button>
+	<DockPanel>
+		<Border DockPanel.Dock="Top" Padding="10 10 10 5">
+			<DockPanel>
+				<Button DockPanel.Dock="Left" Background="Transparent">
+					<materialIcons:MaterialIcon Kind="Menu" />
+				</Button>
 
-                <Button DockPanel.Dock="Right" Background="Transparent" Command="{Binding SearchForDevicesCommand}">
-                    <PathIcon Data="{StaticResource add_regular}" />
-                </Button>
+				<Button DockPanel.Dock="Right" Background="Transparent" Command="{Binding SearchForDevicesCommand}">
+					<materialIcons:MaterialIcon Kind="Plus" />
+				</Button>
 
-                <TextBlock Text="Select a computer" Margin="10 0" VerticalAlignment="Center" />
-            </DockPanel>
-        </Border>
+				<TextBlock Text="Select a computer" Margin="10 0" VerticalAlignment="Center" />
+			</DockPanel>
+		</Border>
 
-        <ContentControl Content="{Binding}" ContentTemplate="{Binding IsSearching, Mode=OneWay, Converter={StaticResource DataLoader}}" />
-    </DockPanel>
+		<ContentControl Content="{Binding}" ContentTemplate="{Binding IsSearching, Mode=OneWay, Converter={StaticResource DataLoader}}" />
+	</DockPanel>
 </UserControl>

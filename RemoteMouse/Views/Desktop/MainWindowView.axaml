@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:vm="clr-namespace:RemoteMouse.ViewModels.Desktop"
+		xmlns:views="clr-namespace:RemoteMouse.Views.Desktop"
+		x:Class="RemoteMouse.Views.Desktop.MainWindowView"
+		x:DataType="vm:MainWindowViewModel"
+		Title="Remote Mouse"
+		CanResize="False">
+	<Design.DataContext>
+		<vm:MainWindowViewModel />
+	</Design.DataContext>
+
+	<views:DashboardView DataContext="{Binding DashboardViewModel}" />
+</Window>

@@ -1,41 +1,41 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:RemoteMouse.ViewModels.Desktop"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="RemoteMouse.Views.Desktop.DashboardView"
-             x:DataType="vm:DashboardViewModel">
-    <StackPanel Margin="10" Spacing="10">
-        <Border Padding="10" CornerRadius="5" BorderThickness="2" BorderBrush="#DCDCDC">
-            <StackPanel Spacing="20">
-                <TextBlock FontWeight="SemiBold" FontSize="20">My Computer</TextBlock>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="clr-namespace:RemoteMouse.ViewModels.Desktop"
+			 x:Class="RemoteMouse.Views.Desktop.DashboardView"
+			 x:DataType="vm:DashboardViewModel">
+	<Design.DataContext>
+		<vm:DashboardViewModel />
+	</Design.DataContext>
 
-                <StackPanel Spacing="10">
-                    <StackPanel Spacing="5" Orientation="Horizontal">
-                        <TextBlock FontWeight="Bold">Device IP: </TextBlock>
-                        <TextBlock Text="{Binding DeviceNetwork.LocalIpAddress, FallbackValue=-}" />
-                    </StackPanel>
+	<StackPanel Margin="10" Spacing="10">
+		<Border Padding="10" CornerRadius="5" BorderThickness="2" BorderBrush="#DCDCDC">
+			<StackPanel Spacing="20">
+				<TextBlock FontWeight="SemiBold" FontSize="20">My Computer</TextBlock>
 
-                    <StackPanel Spacing="5" Orientation="Horizontal">
-                        <TextBlock FontWeight="Bold">Network Status: </TextBlock>
-                        <TextBlock Text="{Binding ConnectivityStatus}" />
-                    </StackPanel>
+				<StackPanel Spacing="10">
+					<StackPanel Spacing="5" Orientation="Horizontal">
+						<TextBlock FontWeight="Bold">Device IP: </TextBlock>
+						<TextBlock Text="{Binding DeviceNetwork.LocalIpAddress, FallbackValue=-}" />
+					</StackPanel>
 
-                    <StackPanel Spacing="5" Orientation="Horizontal">
-                        <TextBlock FontWeight="Bold">Network Name: </TextBlock>
-                        <TextBlock Text="{Binding DeviceNetwork.NetworkInterface.Name, FallbackValue=-}" />
-                    </StackPanel>
-                </StackPanel>
-            </StackPanel>
-        </Border>
+					<StackPanel Spacing="5" Orientation="Horizontal">
+						<TextBlock FontWeight="Bold">Network Status: </TextBlock>
+						<TextBlock Text="{Binding ConnectivityStatus}" />
+					</StackPanel>
 
-        <Border Padding="10" CornerRadius="5" BorderThickness="2" BorderBrush="#DCDCDC">
-            <StackPanel Spacing="20">
-                <TextBlock FontWeight="SemiBold" FontSize="20">Connected Remotes</TextBlock>
+					<StackPanel Spacing="5" Orientation="Horizontal">
+						<TextBlock FontWeight="Bold">Network Name: </TextBlock>
+						<TextBlock Text="{Binding DeviceNetwork.NetworkInterface.Name, FallbackValue=-}" />
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+		</Border>
 
-                <TextBlock HorizontalAlignment="Center">No visitors</TextBlock>
-            </StackPanel>
-        </Border>
-    </StackPanel>
+		<Border Padding="10" CornerRadius="5" BorderThickness="2" BorderBrush="#DCDCDC">
+			<StackPanel Spacing="20">
+				<TextBlock FontWeight="SemiBold" FontSize="20">Connected Remotes</TextBlock>
+				<TextBlock HorizontalAlignment="Center">No visitors</TextBlock>
+			</StackPanel>
+		</Border>
+	</StackPanel>
 </UserControl>

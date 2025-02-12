@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document launchScreen="YES" propertyAccessControl="none" systemVersion="14A314h" targetRuntime="iOS.CocoaTouch" toolsVersion="6214" type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" useAutolayout="YES" useTraitCollections="YES" version="3.0">
-    <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6207" />
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1" />
-    </dependencies>
-    <objects>
-        <placeholder id="-1" placeholderIdentifier="IBFilesOwner" userLabel="File's Owner" />
-        <placeholder customClass="UIResponder" id="-2" placeholderIdentifier="IBFirstResponder" />
-        <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect height="480" key="frame" width="480" x="0.0" y="0.0" />
-            <autoresizingMask heightSizable="YES" key="autoresizingMask" widthSizable="YES" />
-            <subviews>
-                <label baselineAdjustment="alignBaselines" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" id="8ie-xW-0ye" lineBreakMode="tailTruncation" minimumFontSize="9" opaque="NO" text="  Copyright (c) 2022 " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" userInteractionEnabled="NO" verticalHuggingPriority="251">
-                    <rect height="21" key="frame" width="441" x="20" y="439" />
-                    <fontDescription key="fontDescription" pointSize="17" type="system" />
-                    <color cocoaTouchSystemColor="darkTextColor" key="textColor" />
-                    <nil key="highlightedColor" />
-                </label>
-                <label baselineAdjustment="alignBaselines" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" id="kId-c2-rCX" lineBreakMode="middleTruncation" minimumFontSize="18" opaque="NO" text="RemoteMouse" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" userInteractionEnabled="NO" verticalHuggingPriority="251">
-                    <rect height="43" key="frame" width="441" x="20" y="140" />
-                    <fontDescription key="fontDescription" pointSize="36" type="boldSystem" />
-                    <color cocoaTouchSystemColor="darkTextColor" key="textColor" />
-                    <nil key="highlightedColor" />
-                </label>
-            </subviews>
-            <color alpha="1" colorSpace="custom" customColorSpace="calibratedWhite" key="backgroundColor" white="1" />
-            <constraints>
-                <constraint constant="1" firstAttribute="centerY" firstItem="kId-c2-rCX" id="5cJ-9S-tgC" multiplier="1/3" secondAttribute="bottom" secondItem="iN0-l3-epB" />
-                <constraint firstAttribute="centerX" id="Koa-jz-hwk" secondAttribute="centerX" secondItem="kId-c2-rCX" />
-                <constraint constant="20" firstAttribute="bottom" id="Kzo-t9-V3l" secondAttribute="bottom" secondItem="8ie-xW-0ye" />
-                <constraint constant="20" firstAttribute="leading" firstItem="8ie-xW-0ye" id="MfP-vx-nX0" secondAttribute="leading" secondItem="iN0-l3-epB" symbolic="YES" />
-                <constraint firstAttribute="centerX" id="ZEH-qu-HZ9" secondAttribute="centerX" secondItem="8ie-xW-0ye" />
-                <constraint constant="20" firstAttribute="leading" firstItem="kId-c2-rCX" id="fvb-Df-36g" secondAttribute="leading" secondItem="iN0-l3-epB" symbolic="YES" />
-            </constraints>
-            <nil key="simulatedStatusBarMetrics" />
-            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics" />
-            <point key="canvasLocation" x="548" y="455" />
-        </view>
-    </objects>
+	<dependencies>
+		<plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6207" />
+		<capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1" />
+	</dependencies>
+	<objects>
+		<placeholder id="-1" placeholderIdentifier="IBFilesOwner" userLabel="File's Owner" />
+		<placeholder customClass="UIResponder" id="-2" placeholderIdentifier="IBFirstResponder" />
+		<view contentMode="scaleToFill" id="iN0-l3-epB">
+			<rect height="480" key="frame" width="480" x="0.0" y="0.0" />
+			<autoresizingMask heightSizable="YES" key="autoresizingMask" widthSizable="YES" />
+			<subviews>
+				<label baselineAdjustment="alignBaselines" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" id="8ie-xW-0ye" lineBreakMode="tailTruncation" minimumFontSize="9" opaque="NO" text="  Copyright (c) 2022 " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" userInteractionEnabled="NO" verticalHuggingPriority="251">
+					<rect height="21" key="frame" width="441" x="20" y="439" />
+					<fontDescription key="fontDescription" pointSize="17" type="system" />
+					<color cocoaTouchSystemColor="darkTextColor" key="textColor" />
+					<nil key="highlightedColor" />
+				</label>
+				<label baselineAdjustment="alignBaselines" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" id="kId-c2-rCX" lineBreakMode="middleTruncation" minimumFontSize="18" opaque="NO" text="RemoteMouse" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" userInteractionEnabled="NO" verticalHuggingPriority="251">
+					<rect height="43" key="frame" width="441" x="20" y="140" />
+					<fontDescription key="fontDescription" pointSize="36" type="boldSystem" />
+					<color cocoaTouchSystemColor="darkTextColor" key="textColor" />
+					<nil key="highlightedColor" />
+				</label>
+			</subviews>
+			<color alpha="1" colorSpace="custom" customColorSpace="calibratedWhite" key="backgroundColor" white="1" />
+			<constraints>
+				<constraint constant="1" firstAttribute="centerY" firstItem="kId-c2-rCX" id="5cJ-9S-tgC" multiplier="1/3" secondAttribute="bottom" secondItem="iN0-l3-epB" />
+				<constraint firstAttribute="centerX" id="Koa-jz-hwk" secondAttribute="centerX" secondItem="kId-c2-rCX" />
+				<constraint constant="20" firstAttribute="bottom" id="Kzo-t9-V3l" secondAttribute="bottom" secondItem="8ie-xW-0ye" />
+				<constraint constant="20" firstAttribute="leading" firstItem="8ie-xW-0ye" id="MfP-vx-nX0" secondAttribute="leading" secondItem="iN0-l3-epB" symbolic="YES" />
+				<constraint firstAttribute="centerX" id="ZEH-qu-HZ9" secondAttribute="centerX" secondItem="8ie-xW-0ye" />
+				<constraint constant="20" firstAttribute="leading" firstItem="kId-c2-rCX" id="fvb-Df-36g" secondAttribute="leading" secondItem="iN0-l3-epB" symbolic="YES" />
+			</constraints>
+			<nil key="simulatedStatusBarMetrics" />
+			<freeformSimulatedSizeMetrics key="simulatedDestinationMetrics" />
+			<point key="canvasLocation" x="548" y="455" />
+		</view>
+	</objects>
 </document>

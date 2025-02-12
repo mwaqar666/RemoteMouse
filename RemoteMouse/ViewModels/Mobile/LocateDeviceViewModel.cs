@@ -4,14 +4,14 @@ using System.Reactive.Disposables;
 using System.Windows.Input;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using RemoteMouse.Discovery.Contracts;
+using RemoteMouse.Discovery.Ssdp.Contracts;
 using Rssdp;
 
 namespace RemoteMouse.ViewModels.Mobile;
 
 public partial class LocateDeviceViewModel() : ViewModelBase, IActivatableViewModel
 {
-    [Reactive] private DeviceListViewModel? _deviceListViewModel;
+    [Reactive] private DeviceListViewModel _deviceListViewModel = new();
 
     [Reactive] private bool _isSearching;
 
@@ -19,7 +19,9 @@ public partial class LocateDeviceViewModel() : ViewModelBase, IActivatableViewMo
     {
         SearchForDevicesCommand = ReactiveCommand.CreateRunInBackground(() => LocateDevices(deviceLocator));
 
-        this.WhenActivated(disposables => LocateDevices(deviceLocator).DisposeWith(disposables));
+        this.WhenActivated(
+            disposables => LocateDevices(deviceLocator).DisposeWith(disposables)
+        );
     }
 
     [SuppressMessage("ReactiveUI.SourceGenerators.CodeFixers.PropertyToReactiveFieldAnalyzer", "RXUISG0016:Property To Reactive Field, change to [Reactive] private type _fieldName;")]
@@ -31,16 +33,15 @@ public partial class LocateDeviceViewModel() : ViewModelBase, IActivatableViewMo
     {
         IsSearching = true;
 
-        return deviceLocator.LocateDevices().Subscribe(SetDevices);
+        DeviceListViewModel.ClearDevices();
+
+        return deviceLocator.LocateDevices().Subscribe(AddDiscoveredDevice);
     }
 
-    private void SetDevices(SsdpDevice[] devices)
+    private void AddDiscoveredDevice(SsdpDevice[] devices)
     {
-        DeviceListViewModel = new DeviceListViewModel
-        {
-            Devices = devices
-        };
-
         IsSearching = false;
+
+        DeviceListViewModel.AddDevices(devices);
     }
 }

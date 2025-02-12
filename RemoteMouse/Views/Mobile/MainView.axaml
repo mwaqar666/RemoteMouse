@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="clr-namespace:RemoteMouse.ViewModels.Mobile"
+			 xmlns:views="clr-namespace:RemoteMouse.Views.Mobile"
+			 x:Class="RemoteMouse.Views.Mobile.MainView"
+			 x:DataType="vm:MainViewModel">
+	<Design.DataContext>
+		<vm:MainViewModel />
+	</Design.DataContext>
+
+	<views:LocateDeviceView DataContext="{Binding LocateDeviceViewModel}" />
+</UserControl>

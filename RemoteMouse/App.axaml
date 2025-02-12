@@ -1,14 +1,17 @@
 <Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:RemoteMouse"
-             x:Class="RemoteMouse.App"
-             RequestedThemeVariant="Default">
-    <Application.DataTemplates>
-        <local:ViewLocator />
-    </Application.DataTemplates>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:materialTheme="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:local="clr-namespace:RemoteMouse"
+			 x:Class="RemoteMouse.App"
+			 RequestedThemeVariant="Default">
+	<Application.DataTemplates>
+		<local:ViewLocator />
+	</Application.DataTemplates>
 
-    <Application.Styles>
-        <FluentTheme />
-        <StyleInclude Source="avares://RemoteMouse/Styles/Icons.axaml" />
-    </Application.Styles>
+	<Application.Styles>
+		<materialTheme:MaterialTheme BaseTheme="Dark" PrimaryColor="Purple" SecondaryColor="Lime" />
+
+		<materialIcons:MaterialIconStyles />
+	</Application.Styles>
 </Application>

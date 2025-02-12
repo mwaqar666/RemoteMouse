@@ -22,35 +22,49 @@ public class App : Application
         // Initialize the dependency service container
         var collection = new ServiceCollection();
 
-        collection.AddCommonServices();
+        collection.AddCommonDependencies();
 
         switch (ApplicationLifetime)
         {
             case IClassicDesktopStyleApplicationLifetime desktopApp:
             {
-                collection.AddDesktopServices();
-
-                desktopApp.MainWindow = new MainWindow
-                {
-                    DataContext = collection.BuildServiceProvider().GetRequiredService<DashboardViewModel>()
-                };
+                RunDesktopVersion(collection, desktopApp);
 
                 break;
             }
 
             case ISingleViewApplicationLifetime mobileApp:
             {
-                collection.AddMobileServices();
-
-                mobileApp.MainView = new LocateDeviceView
-                {
-                    DataContext = collection.BuildServiceProvider().GetRequiredService<LocateDeviceViewModel>()
-                };
+                RunMobileVersion(collection, mobileApp);
 
                 break;
             }
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private static void RunDesktopVersion(IServiceCollection collection, IClassicDesktopStyleApplicationLifetime app)
+    {
+        collection.AddDesktopDependencies();
+
+        var serviceProvider = collection.BuildServiceProvider();
+
+        app.MainWindow = new MainWindowView
+        {
+            DataContext = serviceProvider.GetRequiredService<MainWindowViewModel>()
+        };
+    }
+
+    private static void RunMobileVersion(IServiceCollection collection, ISingleViewApplicationLifetime app)
+    {
+        collection.AddMobileDependencies();
+
+        var serviceProvider = collection.BuildServiceProvider();
+
+        app.MainView = new MainView
+        {
+            DataContext = serviceProvider.GetRequiredService<MainViewModel>()
+        };
     }
 }
